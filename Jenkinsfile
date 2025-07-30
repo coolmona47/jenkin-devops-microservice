@@ -1,35 +1,33 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18-alpine'
-        }
-    }
-    
+    agent any
+
     stages {
         stage('Build') {
             steps {
-                sh 'node --version'
-                sh 'npm --version'
-                echo 'Build'
-                // Add your actual npm commands here
-                // sh 'npm install'
-                // sh 'npm run build'
+                echo "Build Stage"
+                echo "PATH: $PATH"
+                echo "BUILD_ID: ${env.BUILD_ID}"
+                echo "JOB_NAME: ${env.JOB_NAME}"
+                echo "BUILD_TAG: ${env.BUILD_TAG}"
+                echo "BUILD_URL: ${env.BUILD_URL}"
             }
         }
+
         stage('Test') {
             steps {
-                echo 'Test'
+                echo 'Test Stage'
                 // sh 'npm test'
             }
         }
+
         stage('Integration Test') {
             steps {
-                echo 'Integration Test'
+                echo 'Integration Test Stage'
                 // sh 'npm run test:integration'
             }
         }
     }
-    
+
     post {
         always {
             echo 'I am awesome. I run always.'
