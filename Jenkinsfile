@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.6.3-jdk-8'  // Use Java 8 to match your pom.xml
-        }
-    }
+    agent any
     
     environment {
         dockerHome = tool 'myDocker'
