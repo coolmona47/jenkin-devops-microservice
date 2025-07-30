@@ -1,16 +1,17 @@
 pipeline {
     agent any
-	environment {
-		dockerHome = tool'myDocker'
-		mavenHome = tool 'myMaven'
-		PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
-	}
-
+    
+    environment {
+        dockerHome = tool 'myDocker'
+        mavenHome = tool 'myMaven'
+        PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+    }
+    
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-				sh 'mvn --version'
-				sh 'docker version'
+                sh 'mvn --version'
+                sh 'docker --version'
                 echo "Build Stage"
                 echo "PATH: $PATH"
                 echo "BUILD_ID: ${env.BUILD_ID}"
@@ -19,22 +20,26 @@ pipeline {
                 echo "BUILD_URL: ${env.BUILD_URL}"
             }
         }
-
-        stage('Test') {
+        
+        stage('Compile') {
             steps {
-                echo 'Test Stage'
-                // sh 'npm test'
+                sh "mvn clean compile"
             }
         }
-
+        
+        stage('Test') {
+            steps {
+                sh "mvn test"
+            }
+        }
+        
         stage('Integration Test') {
             steps {
-                echo 'Integration Test Stage'
-                // sh 'npm run test:integration'
+                sh "mvn failsafe:integration-test failsafe:verify"
             }
         }
     }
-
+    
     post {
         always {
             echo 'I am awesome. I run always.'
