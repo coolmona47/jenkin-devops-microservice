@@ -1,31 +1,31 @@
 pipeline {
     agent {
         docker {
-            image 'maven:3.6.3'
-     
-      
+            image 'node:18-alpine'
         }
     }
     
     stages {
         stage('Build') {
             steps {
-                sh 'mvn --version'
+                sh 'node --version'
+                sh 'npm --version'
                 echo 'Build'
-                // Add your actual Maven commands here
-                // sh 'mvn clean compile'
+                // Add your actual npm commands here
+                // sh 'npm install'
+                // sh 'npm run build'
             }
         }
         stage('Test') {
             steps {
                 echo 'Test'
-                // sh 'mvn test'
+                // sh 'npm test'
             }
         }
         stage('Integration Test') {
             steps {
                 echo 'Integration Test'
-                // sh 'mvn verify'
+                // sh 'npm run test:integration'
             }
         }
     }
