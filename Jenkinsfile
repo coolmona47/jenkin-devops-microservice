@@ -2,30 +2,34 @@ pipeline {
     agent {
         docker {
             image 'maven:3.6.3'
-            label '' // Optional: specify if it should run only on agents with a certain label
-            args '-v /root/.m2:/root/.m2' // Optional: cache Maven dependencies across builds
+     
+      
         }
     }
-
+    
     stages {
         stage('Build') {
             steps {
                 sh 'mvn --version'
                 echo 'Build'
+                // Add your actual Maven commands here
+                // sh 'mvn clean compile'
             }
         }
         stage('Test') {
             steps {
                 echo 'Test'
+                // sh 'mvn test'
             }
         }
         stage('Integration Test') {
             steps {
                 echo 'Integration Test'
+                // sh 'mvn verify'
             }
         }
     }
-
+    
     post {
         always {
             echo 'I am awesome. I run always.'
