@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.6.3-jdk-8'  // Use Java 8 to match your pom.xml
+        }
+    }
     
     environment {
         dockerHome = tool 'myDocker'
@@ -12,6 +16,7 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'docker --version'
+                sh 'java -version'
                 echo "Build Stage"
                 echo "PATH: $PATH"
                 echo "BUILD_ID: ${env.BUILD_ID}"
@@ -36,6 +41,12 @@ pipeline {
         stage('Integration Test') {
             steps {
                 sh "mvn failsafe:integration-test failsafe:verify"
+            }
+        }
+        
+        stage('Package') {
+            steps {
+                sh "mvn package -DskipTests=true"
             }
         }
     }
