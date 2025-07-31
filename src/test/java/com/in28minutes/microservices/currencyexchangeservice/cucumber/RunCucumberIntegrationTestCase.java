@@ -8,7 +8,8 @@ import io.cucumber.junit.CucumberOptions;
 @CucumberOptions(
     monochrome = true,
     features = "src/test/resources",
-    plugin = { "pretty" }
+    glue = "com.in28minutes.microservices.currencyexchangeservice.cucumber",
+    plugin = { "pretty", "json:target/cucumber-report.json", "html:target/cucumber-html-reports" }
 )
 public class RunCucumberIntegrationTestCase {
 }

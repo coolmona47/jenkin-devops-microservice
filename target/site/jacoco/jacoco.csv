@@ -1,0 +1,7 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+currency-exchange,com.in28minutes.microservices.currencyexchangeservice.resource,ExchangeValue,3,73,0,0,2,14,1,8,1,8
+currency-exchange,com.in28minutes.microservices.currencyexchangeservice.resource,CurrencyExchangeController,31,48,1,1,3,11,2,5,1,5
+currency-exchange,com.in28minutes.microservices.currencyexchangeservice.util.environment,InstanceInformationService,19,3,0,0,1,1,1,1,1,1
+currency-exchange,com.in28minutes.microservices.currencyexchangeservice.util.environment,EnvironmentConfigurationLogger,5,66,1,1,1,15,1,6,0,6
+currency-exchange,com.in28minutes.microservices.currencyexchangeservice,CurrencyExchangeServiceApplicationH2,5,3,0,0,2,1,1,1,1,1
+currency-exchange,com.in28minutes.microservices.currencyexchangeservice,HelloWorld,22,0,0,0,3,0,2,0,2,0

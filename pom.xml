@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
-                             
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.in28minutes.microservices</groupId>
@@ -21,19 +21,14 @@
     </parent>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <java.version>1.8</java.version> <!-- Your Java is 8, keep it consistent -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <surefire.version>2.22.1</surefire.version>
-        <failsafe.version>2.22.1</failsafe.version>
+        <surefire.version>2.22.2</surefire.version> <!-- Minor bump -->
+        <failsafe.version>2.22.2</failsafe.version>
 
-        <jacoco.version>0.8.3</jacoco.version>
-        <jacoco.path>${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar</jacoco.path>
-        <jacoco.utReport>${project.build.directory}/jacoco.exec</jacoco.utReport>
-        <jacoco.itReport>${project.build.directory}/jacoco-it.exec</jacoco.itReport>
-        <jacoco.utAgentConfig>-javaagent:${jacoco.path}=destfile=${jacoco.utReport}</jacoco.utAgentConfig>
-        <jacoco.itAgentConfig>-javaagent:${jacoco.path}=destfile=${jacoco.itReport}</jacoco.itAgentConfig>
+        <jacoco.version>0.8.8</jacoco.version> <!-- Upgraded Jacoco for better Java 8+ compatibility -->
 
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
         <jacoco-listeners.version>5.10.2.17019</jacoco-listeners.version>
@@ -52,8 +47,7 @@
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- Spring Boot Starter Web and JPA -->
+        <!-- Spring Boot starter dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -64,20 +58,21 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- Devtools, H2 DB -->
+        <!-- Devtools for development only -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
 
+        <!-- In-memory database for testing -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- JAXB dependencies -->
+        <!-- JAXB dependencies for XML support -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -97,11 +92,18 @@
             <version>1.1.1</version>
         </dependency>
 
-        <!-- Spring Boot test starter -->
+        <!-- Spring Boot testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <!-- Exclude JUnit 4 to avoid conflicts if you want to switch to JUnit 5 -->
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring Security test -->
@@ -111,7 +113,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Cucumber dependencies - updated to v7.17.0 -->
+        <!-- Cucumber updated to 7.x (latest stable) -->
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>
@@ -131,7 +133,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Rest Assured dependencies -->
+        <!-- Rest Assured dependencies for API testing -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -151,7 +153,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JaCoCo -->
+        <!-- JaCoCo for Code coverage -->
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
@@ -165,16 +167,39 @@
             <version>${jacoco-listeners.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
         <finalName>currency-exchange</finalName>
         <plugins>
-            <!-- Spring Boot plugin -->
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- JaCoCo Maven plugin to prepare agent and generate coverage reports -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <!-- Attach JaCoCo agent before tests -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- Create coverage report after tests -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Maven Surefire plugin for unit tests -->
@@ -183,7 +208,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
-                    <argLine>${jacoco.utAgentConfig}</argLine>
+                    <!-- Include the jacoco agent JVM arg -->
+                    <argLine>${argLine}</argLine>
                     <excludes>
                         <exclude>**/RunCucumberIntegrationTestCase.java</exclude>
                     </excludes>
@@ -205,9 +231,10 @@
                     <includes>
                         <include>**/*CucumberIntegrationTestCase.java</include>
                     </includes>
+                    <!-- Include jacoco agent argLine -->
+                    <argLine>${argLine}</argLine>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
@@ -248,5 +275,4 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
 </project>

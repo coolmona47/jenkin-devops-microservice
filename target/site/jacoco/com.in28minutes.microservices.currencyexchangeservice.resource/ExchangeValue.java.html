@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExchangeValue.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">currency-exchange</a> &gt; <a href="index.source.html" class="el_package">com.in28minutes.microservices.currencyexchangeservice.resource</a> &gt; <span class="el_source">ExchangeValue.java</span></div><h1>ExchangeValue.java</h1><pre class="source lang-java linenums">package com.in28minutes.microservices.currencyexchangeservice.resource;
+
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class ExchangeValue {
+
+	@Id
+	private Long id;
+
+	@Column(name = &quot;currency_from&quot;)
+	private String from;
+
+	@Column(name = &quot;currency_to&quot;)
+	private String to;
+
+	private BigDecimal conversionMultiple;
+	
+	private String exchangeEnvironmentInfo;
+
+<span class="nc" id="L25">	public ExchangeValue() {</span>
+
+<span class="nc" id="L27">	}</span>
+
+	public ExchangeValue(Long id, String from, String to, BigDecimal conversionMultiple) {
+<span class="fc" id="L30">		super();</span>
+<span class="fc" id="L31">		this.id = id;</span>
+<span class="fc" id="L32">		this.from = from;</span>
+<span class="fc" id="L33">		this.to = to;</span>
+<span class="fc" id="L34">		this.conversionMultiple = conversionMultiple;</span>
+<span class="fc" id="L35">	}</span>
+
+	public Long getId() {
+<span class="fc" id="L38">		return id;</span>
+	}
+
+	public String getFrom() {
+<span class="fc" id="L42">		return from;</span>
+	}
+
+	public String getTo() {
+<span class="fc" id="L46">		return to;</span>
+	}
+
+	public BigDecimal getConversionMultiple() {
+<span class="fc" id="L50">		return conversionMultiple;</span>
+	}
+
+	public String getExchangeEnvironmentInfo() {
+<span class="fc" id="L54">		return exchangeEnvironmentInfo;</span>
+	}
+
+	public void setExchangeEnvironmentInfo(String exchangeEnvironmentInfo) {
+<span class="fc" id="L58">		this.exchangeEnvironmentInfo = exchangeEnvironmentInfo+&quot;updated&quot;;</span>
+<span class="fc" id="L59">	}</span>
+
+	@Override
+	public String toString() {
+<span class="fc" id="L63">		return &quot;ExchangeValue [id=&quot; + id + &quot;, from=&quot; + from + &quot;, to=&quot; + to + &quot;, conversionMultiple=&quot;</span>
+				+ conversionMultiple + &quot;, exchangeEnvironmentInfo=&quot; + exchangeEnvironmentInfo + &quot;]&quot;;
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
