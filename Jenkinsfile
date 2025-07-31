@@ -10,34 +10,25 @@ pipeline {
     stages {
         stage('Info') {
             steps {
-                echo "🔧 Environment Info"
-                sh 'mvn --version || echo "Maven not available on host"'
-                sh 'docker version || echo "Docker not available on host"'
-                sh 'java -version || echo "Java not available on host"'
-
+                echo '🔧 Environment Info'
+                sh 'mvn --version'
+                sh 'docker version'
+                sh 'java -version'
                 echo "📦 PATH: $PATH"
-                echo "📌 BUILD_NUMBER: $BUILD_NUMBER"
-                echo "🆔 BUILD_ID: $BUILD_ID"
-                echo "🏷️  BUILD_TAG: $BUILD_TAG"
-                echo "🔗 BUILD_URL: $BUILD_URL"
+                echo "📌 BUILD_NUMBER: $env.BUILD_NUMBER"
+                echo "🆔 BUILD_ID: $env.BUILD_ID"
+                echo "🏷️  BUILD_TAG: $env.BUILD_TAG"
+                echo "🔗 BUILD_URL: $env.BUILD_URL"
             }
         }
 
         stage('Build & Test in Docker') {
             steps {
                 script {
-                    docker.image('maven:3.8.8-eclipse-temurin-17-alpine').inside('-v /root/.m2:/root/.m2') {
-                        echo "📦 Building the project..."
+                    docker.image('maven:3.8.7-eclipse-temurin-17').inside('-v $HOME/.m2:/root/.m2') {
                         sh 'mvn clean compile'
-
-                        echo "✅ Running unit tests..."
                         sh 'mvn test'
-
-                        echo "🔁 Running integration tests..."
-                        sh 'mvn failsafe:integration-test failsafe:verify'
-
-                        echo "📦 Packaging application..."
-                        sh 'mvn package -DskipTests=true'
+                        sh 'mvn verify'
                     }
                 }
             }
