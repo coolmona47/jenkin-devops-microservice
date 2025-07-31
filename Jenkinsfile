@@ -1,48 +1,31 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.6.3'
-        }
-    }
+    agent any
 
     stages {
-        stage('Build') {
+        stage('Check Docker Version') {
             steps {
-                sh 'mvn --version'
-                echo "build"
+                echo "Checking Docker version..."
+                sh 'docker --version'
             }
         }
 
-        stage('Test') {
+        stage('List Running Containers') {
             steps {
-                echo "test"
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo "deploy"
-            }
-        }
-
-        stage('Integration Test') {
-            steps {
-                echo "Integration Test"
+                echo "Listing running Docker containers..."
+                sh 'docker ps'
             }
         }
     }
 
     post {
         success {
-            echo "Pipeline completed successfully ✅"
+            echo "✅ Docker is working inside Jenkins!"
         }
-
         failure {
-            echo "Pipeline failed ❌"
+            echo "❌ Docker is NOT working inside Jenkins. Check error logs above."
         }
-
         always {
-            echo "This runs regardless of success or failure 🔁"
+            echo "🔁 Docker check completed."
         }
     }
 }
