@@ -8,11 +8,25 @@ pipeline {
     }
     
     stages {
-        stage('Environment Check') {
+        stage('Environment Debug') {
             steps {
-                echo "=== Environment Information ==="
+                echo "=== Debug Information ==="
+                echo "dockerHome: ${dockerHome}"
+                echo "mavenHome: ${mavenHome}"
+                echo "Updated PATH: ${PATH}"
+                sh 'echo "Current PATH: $PATH"'
+                sh 'which mvn || echo "mvn not found in PATH"'
+                sh 'which docker || echo "docker not found in PATH"'
+            }
+        }
+        
+        stage('Checkout') {
+            steps {
+                echo "=== Version Checks ==="
                 sh 'mvn --version'
                 sh 'docker version'
+                echo "build"
+                echo "PATH - $PATH"
                 echo "BUILD_NUMBER - $env.BUILD_NUMBER"
                 echo "BUILD_ID - $env.BUILD_ID"
                 echo "BUILD_TAG - $env.BUILD_TAG"
@@ -29,17 +43,15 @@ pipeline {
         
         stage('Test') {
             steps {
-                echo "=== Unit Testing Stage (Skipping Cucumber Tests) ==="
-                // Skip tests temporarily due to Cucumber version issues
-                sh "mvn test -DskipTests=true"
-                echo "Tests skipped due to Cucumber dependency issues"
+                echo "=== Unit Testing Stage ==="
+                sh "mvn test"
             }
         }
         
-        stage('Package') {
+        stage('Integration Test') {
             steps {
-                echo "=== Packaging Stage ==="
-                sh "mvn package -DskipTests=true"
+                echo "=== Integration Testing Stage ==="
+                sh "mvn failsafe:integration-test failsafe:verify"
             }
         }
     }
@@ -47,7 +59,6 @@ pipeline {
     post {
         success {
             echo "✅ Pipeline completed successfully!"
-            echo "Note: Tests were skipped due to Cucumber version compatibility issues"
         }
         failure {
             echo "❌ Pipeline failed. Please check logs."
