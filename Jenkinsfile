@@ -2,6 +2,7 @@ pipeline {
     agent {
         docker {
             image 'maven:3.6.3'
+            args '-u root --entrypoint=""'
         }
     }
 
@@ -17,7 +18,6 @@ pipeline {
         stage('Test') {
             steps {
                 echo "🧪 Running Tests..."
-                // You can replace this with actual test commands
                 sh 'echo "Tests passed!"'
             }
         }
@@ -25,16 +25,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "🚀 Deploying the Application..."
-                // You can add real deploy commands here
-                sh 'echo "Deploy step placeholder"'
             }
         }
 
         stage('Integration Test') {
             steps {
                 echo "🔗 Running Integration Tests..."
-                // You can add actual integration tests
-                sh 'echo "Integration test step placeholder"'
             }
         }
     }
@@ -44,10 +40,10 @@ pipeline {
             echo "✅ Pipeline completed successfully!"
         }
         failure {
-            echo "❌ Pipeline failed. Please check the logs."
+            echo "❌ Pipeline failed. Please check logs."
         }
         always {
-            echo "🔁 Pipeline finished. (Runs always)"
+            echo "🔁 Pipeline finished."
         }
     }
 }
