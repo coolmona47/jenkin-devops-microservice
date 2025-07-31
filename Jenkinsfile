@@ -4,14 +4,12 @@ pipeline {
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
-        // Do NOT expand variables here in environment PATH, keep it simple or omit PATH here
-        // PATH = "$dockerHome/bin:$mavenHome/bin:$env.PATH"  <-- avoid this here
+        // DON’T set PATH here with $dockerHome and $mavenHome
     }
 
     stages {
         stage('Environment Debug') {
             steps {
-                // Construct PATH inside withEnv to access dockerHome and mavenHome properly
                 withEnv(["PATH=${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"]) {
                     echo "=== Debug Information ==="
                     echo "dockerHome: ${dockerHome}"
