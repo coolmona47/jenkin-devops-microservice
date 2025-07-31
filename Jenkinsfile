@@ -1,31 +1,29 @@
 pipeline {
     agent any
-//   agent {
-//         docker {
-//             image 'node:20-alpine'
-     
-//         }
-//     }  
+
+    environment {
+        dockerHome = tool 'myDocker'
+        mavenHome = tool 'myMaven'
+        PATH = "$dockerHome/bin:$mavenHome/bin:$env.PATH"
+    }
 
     stages {
         stage('Build') {
             steps {
-         
-                //sh 'node --version'
+                sh 'mvn --version'
+                sh 'docker version'
                 echo "build"
                 echo "PATH -$PATH"
                 echo "BUILD_NUMBER - $env.BUILD_NUMBER"
                 echo "BUILD_ID - $env.BUILD_ID"
                 echo "BUILD_TAG - $env.BUILD_TAG"
                 echo "BUILD_URL - $env.BUILD_URL"
-         
             }
         }
 
         stage('Test') {
             steps {
                 echo "Tests"
-        
             }
         }
 
