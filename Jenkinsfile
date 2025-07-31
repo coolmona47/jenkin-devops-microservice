@@ -4,6 +4,8 @@ pipeline {
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
+        // Name of Jenkins credentials for Docker Hub (Username/Password)
+        DOCKERHUB_CREDS = 'Dockerhub'
     }
 
     stages {
@@ -28,6 +30,7 @@ pipeline {
                     def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
                     withEnv(["PATH=$newPath"]) {
                         echo "=== Checkout Source Code ==="
+                        echo "BUILD_TAG - ${env.BUILD_TAG}"
                         checkout scm
                         sh 'git rev-parse HEAD'
                     }
@@ -39,7 +42,7 @@ pipeline {
                 script {
                     def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
                     withEnv(["PATH=$newPath"]) {
-                        sh "mvn clean compile"
+                        sh 'mvn clean compile'
                     }
                 }
             }
@@ -49,7 +52,7 @@ pipeline {
                 script {
                     def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
                     withEnv(["PATH=$newPath"]) {
-                        sh "mvn test"
+                        sh 'mvn test'
                     }
                 }
             }
@@ -59,7 +62,36 @@ pipeline {
                 script {
                     def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
                     withEnv(["PATH=$newPath"]) {
-                        sh "mvn failsafe:integration-test failsafe:verify"
+                        sh 'mvn failsafe:integration-test failsafe:verify'
+                    }
+                }
+            }
+        }
+        stage('Package') {
+            steps {
+                script {
+                    def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
+                    withEnv(["PATH=$newPath"]) {
+                        sh 'mvn package -DskipTests'
+                    }
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Use build tag for image versioning
+                    dockerImage = docker.build("mohan3/curreny-exchnage-devops:${env.BUILD_TAG}")
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Log in and push both the tagged and 'latest' images
+                    docker.withRegistry('', env.DOCKERHUB_CREDS) {
+                        dockerImage.push()
+                        dockerImage.push('latest')
                     }
                 }
             }
