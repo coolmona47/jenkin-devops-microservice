@@ -4,62 +4,63 @@ pipeline {
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
-        // DON’T set PATH here with $dockerHome and $mavenHome
     }
 
     stages {
-        stage('Environment Debug') {
+        stage('Debug and Setup Path') {
             steps {
-                withEnv(["PATH=${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"]) {
-                    echo "=== Debug Information ==="
-                    echo "dockerHome: ${dockerHome}"
-                    echo "mavenHome: ${mavenHome}"
-                    sh 'echo "Current PATH: $PATH"'
-                    sh 'which mvn || echo "mvn not found in PATH"'
-                    sh 'which docker || echo "docker not found in PATH"'
+                script {
+                    def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
+                    withEnv(["PATH=$newPath"]) {
+                        echo "=== Debug Info ==="
+                        sh 'echo PATH=$PATH'
+                        sh 'mvn --version'
+                        sh 'docker --version'
+                        sh 'which mvn || echo "mvn not found"'
+                        sh 'which docker || echo "docker not found"'
+                    }
                 }
             }
         }
-
         stage('Checkout') {
             steps {
-                withEnv(["PATH=${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"]) {
-                    echo "=== Version Checks ==="
-                    sh 'mvn --version'
-                    sh 'docker version'
-                    echo "build"
-                    echo "PATH - $PATH"
-                    echo "BUILD_NUMBER - $env.BUILD_NUMBER"
-                    echo "BUILD_ID - $env.BUILD_ID"
-                    echo "BUILD_TAG - $env.BUILD_TAG"
-                    echo "BUILD_URL - $env.BUILD_URL"
+                script {
+                    def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
+                    withEnv(["PATH=$newPath"]) {
+                        echo "=== Checkout Source Code ==="
+                        checkout scm
+                        sh 'git rev-parse HEAD'
+                    }
                 }
             }
         }
-
         stage('Compile') {
             steps {
-                withEnv(["PATH=${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"]) {
-                    echo "=== Compilation Stage ==="
-                    sh "mvn clean compile"
+                script {
+                    def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
+                    withEnv(["PATH=$newPath"]) {
+                        sh "mvn clean compile"
+                    }
                 }
             }
         }
-
         stage('Test') {
             steps {
-                withEnv(["PATH=${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"]) {
-                    echo "=== Unit Testing Stage ==="
-                    sh "mvn test"
+                script {
+                    def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
+                    withEnv(["PATH=$newPath"]) {
+                        sh "mvn test"
+                    }
                 }
             }
         }
-
         stage('Integration Test') {
             steps {
-                withEnv(["PATH=${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"]) {
-                    echo "=== Integration Testing Stage ==="
-                    sh "mvn failsafe:integration-test failsafe:verify"
+                script {
+                    def newPath = "${env.dockerHome}/bin:${env.mavenHome}/bin:${env.PATH}"
+                    withEnv(["PATH=$newPath"]) {
+                        sh "mvn failsafe:integration-test failsafe:verify"
+                    }
                 }
             }
         }
