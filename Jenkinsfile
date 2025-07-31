@@ -1,31 +1,53 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.6.3'
+        }
+    }
 
     stages {
-        stage('Check Docker Version') {
+        stage('Build') {
             steps {
-                echo "Checking Docker version..."
-                sh 'docker --version'
+                echo "🔧 Running Maven Build..."
+                sh 'mvn --version'
+                sh 'mvn clean install'
             }
         }
 
-        stage('List Running Containers') {
+        stage('Test') {
             steps {
-                echo "Listing running Docker containers..."
-                sh 'docker ps'
+                echo "🧪 Running Tests..."
+                // You can replace this with actual test commands
+                sh 'echo "Tests passed!"'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "🚀 Deploying the Application..."
+                // You can add real deploy commands here
+                sh 'echo "Deploy step placeholder"'
+            }
+        }
+
+        stage('Integration Test') {
+            steps {
+                echo "🔗 Running Integration Tests..."
+                // You can add actual integration tests
+                sh 'echo "Integration test step placeholder"'
             }
         }
     }
 
     post {
         success {
-            echo "✅ Docker is working inside Jenkins!"
+            echo "✅ Pipeline completed successfully!"
         }
         failure {
-            echo "❌ Docker is NOT working inside Jenkins. Check error logs above."
+            echo "❌ Pipeline failed. Please check the logs."
         }
         always {
-            echo "🔁 Docker check completed."
+            echo "🔁 Pipeline finished. (Runs always)"
         }
     }
 }
