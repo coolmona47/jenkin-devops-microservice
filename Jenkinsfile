@@ -1,65 +1,70 @@
 pipeline {
     agent any
-
+    
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
-        PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+        PATH = "$dockerHome/bin:$mavenHome/bin:$env.PATH"
     }
-
+    
     stages {
-        stage('Environment Info') {
+        stage('Environment Debug') {
             steps {
-                sh 'java -version || true'
-                sh 'mvn -v'
-                sh 'docker -v'
+                echo "=== Debug Information ==="
+                echo "dockerHome: ${dockerHome}"
+                echo "mavenHome: ${mavenHome}"
+                echo "Updated PATH: ${PATH}"
+                sh 'echo "Current PATH: $PATH"'
+                sh 'which mvn || echo "mvn not found in PATH"'
+                sh 'which docker || echo "docker not found in PATH"'
             }
         }
-
+        
         stage('Checkout') {
             steps {
-                checkout scm
+                echo "=== Version Checks ==="
+                sh 'mvn --version'
+                sh 'docker version'
+                echo "build"
+                echo "PATH - $PATH"
+                echo "BUILD_NUMBER - $env.BUILD_NUMBER"
+                echo "BUILD_ID - $env.BUILD_ID"
+                echo "BUILD_TAG - $env.BUILD_TAG"
+                echo "BUILD_URL - $env.BUILD_URL"
             }
         }
-
-        stage('Build') {
-            steps {
-                echo "BUILD_NUMBER - ${env.BUILD_NUMBER}"
-                echo "BUILD_ID - ${env.BUILD_ID}"
-                echo "JOB_NAME - ${env.JOB_NAME}"
-                echo "BUILD_TAG - ${env.BUILD_TAG}"
-                echo "BUILD_URL - ${env.BUILD_URL}"
-            }
-        }
-
+        
         stage('Compile') {
             steps {
-                sh 'mvn clean compile'
+                echo "=== Compilation Stage ==="
+                sh "mvn clean compile"
             }
         }
-
+        
         stage('Test') {
             steps {
-                sh 'mvn test'
+                echo "=== Unit Testing Stage ==="
+                sh "mvn test"
             }
         }
-
-        stage('Package') {
+        
+        stage('Integration Test') {
             steps {
-                sh 'mvn package -DskipTests=true'
+                echo "=== Integration Testing Stage ==="
+                sh "mvn failsafe:integration-test failsafe:verify"
             }
         }
     }
-
+    
     post {
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo "✅ Pipeline completed successfully!"
         }
         failure {
-            echo '❌ Pipeline failed. Check console for details.'
+            echo "❌ Pipeline failed. Please check logs."
         }
         always {
-            echo '🔁 Pipeline finished.'
+            echo "🔁 Pipeline finished."
         }
     }
 }
