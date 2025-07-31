@@ -124,24 +124,8 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured</artifactId>
-			<version>4.1.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>json-path</artifactId>
-			<version>4.1.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>xml-path</artifactId>
-			<version>4.1.2</version>
-			<scope>test</scope>
-		</dependency>
+		<!-- Rest Assured dependencies temporarily removed to fix Groovy conflicts -->
+		<!-- If you need REST testing, consider using Spring's TestRestTemplate instead -->
 	</dependencies>
 
 	<dependencyManagement>
