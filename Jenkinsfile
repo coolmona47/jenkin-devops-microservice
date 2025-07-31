@@ -4,46 +4,62 @@ pipeline {
     environment {
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
-        PATH = "$dockerHome/bin:$mavenHome/bin:$env.PATH"
+        PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
     }
 
     stages {
-        stage('Info') {
+        stage('Environment Info') {
             steps {
-                echo '🔧 Environment Info'
-                sh 'mvn --version'
-                sh 'docker version'
-                sh 'java -version'
-                echo "📦 PATH: $PATH"
-                echo "📌 BUILD_NUMBER: $env.BUILD_NUMBER"
-                echo "🆔 BUILD_ID: $env.BUILD_ID"
-                echo "🏷️  BUILD_TAG: $env.BUILD_TAG"
-                echo "🔗 BUILD_URL: $env.BUILD_URL"
+                sh 'java -version || true'
+                sh 'mvn -v'
+                sh 'docker -v'
             }
         }
 
-        stage('Build & Test in Docker') {
+        stage('Checkout') {
             steps {
-                script {
-                    docker.image('maven:3.8.7-eclipse-temurin-17').inside('-v $HOME/.m2:/root/.m2') {
-                        sh 'mvn clean compile'
-                        sh 'mvn test'
-                        sh 'mvn verify'
-                    }
-                }
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "BUILD_NUMBER - ${env.BUILD_NUMBER}"
+                echo "BUILD_ID - ${env.BUILD_ID}"
+                echo "JOB_NAME - ${env.JOB_NAME}"
+                echo "BUILD_TAG - ${env.BUILD_TAG}"
+                echo "BUILD_URL - ${env.BUILD_URL}"
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package -DskipTests=true'
             }
         }
     }
 
     post {
         success {
-            echo "✅ Pipeline completed successfully!"
+            echo '✅ Pipeline completed successfully!'
         }
         failure {
-            echo "❌ Pipeline failed. Please check logs."
+            echo '❌ Pipeline failed. Check console for details.'
         }
         always {
-            echo "🔁 Pipeline execution finished."
+            echo '🔁 Pipeline finished.'
         }
     }
 }
