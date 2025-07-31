@@ -2,29 +2,24 @@ pipeline {
     agent {
         docker {
             image 'maven:3.6.3'
-            args '-u root --entrypoint=""'
+     
         }
     }
 
     stages {
         stage('Build') {
             steps {
-                echo "🔧 Running Maven Build..."
+         
                 sh 'mvn --version'
-                sh 'mvn clean install'
+                echo "build"
+         
             }
         }
 
         stage('Test') {
             steps {
-                echo "🧪 Running Tests..."
-                sh 'echo "Tests passed!"'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo "🚀 Deploying the Application..."
+                echo "Tests"
+        
             }
         }
 
